@@ -1,0 +1,1888 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tastschreiben – Die Griffe zum E und I</title>
+<style>
+/* ============================================================
+   TASTSCHREIBEN-TRAINER — Vorlage
+   Diese Datei ist so aufgebaut, dass sie für andere Griffwege
+   wiederverwendet werden kann. Alle buchstaben-spezifischen
+   Inhalte (Übungstexte, Griffweg-Konfiguration) liegen gebündelt
+   im <script>-Bereich unten im Objekt "LEKTION".
+   Layout/Logik darunter muss für neue Buchstaben i. d. R. NICHT
+   angefasst werden.
+   ============================================================ */
+
+:root{
+  --farbe-d:#2563eb;      /* linker Mittelfinger - Grundtaste D / neue Taste E */
+  --farbe-k:#dc2626;      /* rechter Mittelfinger - Grundtaste K / neue Taste I */
+  --bg:#f7f5f0;
+  --card:#ffffff;
+  --text:#2b2620;
+  --text-soft:#6b6459;
+  --accent:#0f766e;
+  --accent-soft:#ccfbf1;
+  --warn:#dc2626;
+  --warn-soft:#fee2e2;
+  --ok:#16a34a;
+  --ok-soft:#dcfce7;
+  --border:#e7e2d8;
+  --radius:16px;
+  --font-hand: 'Comic Sans MS', 'Segoe Print', cursive;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height:1.5;
+  padding-bottom:60px;
+}
+
+/* ---------- Kopfbereich ---------- */
+header.top{
+  background: linear-gradient(135deg,#1e3a5f 0%,#0f766e 100%);
+  color:white;
+  padding:28px 20px 24px;
+  text-align:center;
+  box-shadow:0 4px 14px rgba(0,0,0,.15);
+}
+header.top h1{
+  margin:0 0 6px;
+  font-size:1.8rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+header.top .buchstaben{
+  display:inline-flex;
+  gap:8px;
+}
+header.top .buchstaben span{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:44px;height:44px;
+  border-radius:50%;
+  background:rgba(255,255,255,.15);
+  border:2px solid rgba(255,255,255,.6);
+  font-weight:800;
+  font-size:1.4rem;
+}
+header.top p.sub{
+  margin:4px 0 0;
+  opacity:.9;
+  font-size:.95rem;
+}
+
+/* ---------- Stufennavigation ---------- */
+nav.stufen{
+  max-width:980px;
+  margin:-22px auto 0;
+  padding:0 16px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:center;
+  position:relative;
+  z-index:5;
+}
+nav.stufen button{
+  position:relative;
+  flex:1 1 150px;
+  border:none;
+  background:var(--card);
+  color:var(--text-soft);
+  padding:14px 10px 10px;
+  border-radius:12px 12px 0 0;
+  cursor:pointer;
+  font-size:.85rem;
+  font-weight:600;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  border-bottom:4px solid transparent;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  transition:.15s;
+}
+nav.stufen button .icon{font-size:1.4rem;}
+nav.stufen button .zahl{
+  position:absolute;
+  top:6px; left:8px;
+  font-size:.7rem;
+  background:var(--border);
+  color:var(--text-soft);
+  width:18px;height:18px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+nav.stufen button.active{
+  color:var(--accent);
+  border-bottom-color:var(--accent);
+  background:var(--card);
+}
+nav.stufen button.done .zahl{
+  background:var(--ok);
+  color:white;
+}
+nav.stufen button:hover{color:var(--accent);}
+
+/* ---------- Hauptbereich ---------- */
+main{
+  max-width:980px;
+  margin:0 auto;
+  background:var(--card);
+  border-radius:0 0 var(--radius) var(--radius);
+  box-shadow:0 6px 24px rgba(0,0,0,.08);
+  padding:28px 24px 36px;
+}
+section.stufe{display:none;}
+section.stufe.active{display:block; animation:fadeIn .35s ease;}
+@keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+
+h2.stufe-titel{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:1.4rem;
+  margin:0 0 6px;
+  color:#1e3a5f;
+}
+h2.stufe-titel .badge{
+  background:var(--accent-soft);
+  color:var(--accent);
+  border-radius:50%;
+  width:34px;height:34px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;
+  flex-shrink:0;
+}
+p.stufe-intro{color:var(--text-soft); margin-top:0;}
+
+hr.trenner{
+  border:none;
+  border-top:2px dashed var(--border);
+  margin:26px 0;
+}
+
+/* ---------- Tastatur / Griffweg-Visualisierung ---------- */
+.tastatur-wrap{
+  display:flex;
+  justify-content:center;
+  margin:18px 0 8px;
+}
+.tastatur-wrap svg{max-width:100%; height:auto;}
+
+.tastatur-steuerung{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  flex-wrap:wrap;
+  margin:6px 0 18px;
+}
+.tastatur-schritt-text{
+  margin:0;
+  font-size:.88rem;
+  font-weight:600;
+  color:var(--text-soft);
+  text-align:center;
+  min-width:220px;
+  flex:1 1 260px;
+}
+.btn.klein{
+  padding:7px 14px;
+  font-size:.85rem;
+}
+.btn:disabled{
+  opacity:.4;
+  cursor:not-allowed;
+}
+
+.legende{
+  display:flex;
+  gap:18px;
+  flex-wrap:wrap;
+  justify-content:center;
+  font-size:.85rem;
+  color:var(--text-soft);
+  margin-bottom:6px;
+}
+.legende span{display:inline-flex; align-items:center; gap:6px;}
+.legende i{width:14px;height:14px;border-radius:4px;display:inline-block;}
+
+/* ---------- Griffweg-Karten (schriftliche Fixierung) ---------- */
+.griffweg-karten{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+  margin:20px 0;
+}
+.griffweg-karte{
+  border:2px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px 18px;
+  background:#fffdf9;
+}
+.griffweg-karte h3{
+  margin:0 0 8px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:1.15rem;
+}
+.griffweg-karte h3 .buchstabe-kreis{
+  width:36px;height:36px;
+  border-radius:50%;
+  color:white;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;
+}
+.griffweg-karte .finger-info{
+  font-size:.9rem;
+  color:var(--text-soft);
+  margin-bottom:10px;
+}
+.griffweg-karte .merksatz{
+  font-family:var(--font-hand);
+  font-size:1.05rem;
+  background:#fff9e6;
+  border-left:4px solid #f0b429;
+  padding:8px 12px;
+  border-radius:0 8px 8px 0;
+}
+
+/* Ausfüllfeld zur schriftlichen Fixierung */
+.fixierung-feld{
+  margin-top:10px;
+}
+.fixierung-feld label{
+  display:block;
+  font-size:.85rem;
+  color:var(--text-soft);
+  margin-bottom:4px;
+}
+.fixierung-feld input[type=text]{
+  width:100%;
+  padding:8px 10px;
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  font-size:1rem;
+  font-family:inherit;
+}
+.fixierung-feld input[type=text]:focus{
+  outline:none;
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-soft);
+}
+.fixierung-feld select{
+  width:100%;
+  padding:8px 10px;
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  font-size:1rem;
+  font-family:inherit;
+  background:white;
+  cursor:pointer;
+}
+.fixierung-feld select:focus{
+  outline:none;
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-soft);
+}
+.fixierung-feld select.richtig{border-color:var(--ok); background:var(--ok-soft);}
+.fixierung-feld select.falsch{border-color:var(--warn); background:var(--warn-soft);}
+
+.karten-aktionen{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+.btn-pruefen{
+  border:none;
+  background:var(--accent);
+  color:white;
+  padding:7px 16px;
+  border-radius:20px;
+  cursor:pointer;
+  font-size:.85rem;
+  font-weight:700;
+}
+.btn-pruefen:hover{background:#0c5d55;}
+.karten-ergebnis{
+  margin-top:10px;
+  font-size:.88rem;
+  font-weight:700;
+  display:none;
+}
+.karten-ergebnis.zeigen{display:block;}
+.karten-ergebnis.gut{color:#166534;}
+.karten-ergebnis.schlecht{color:#991b1b;}
+
+/* ---------- Fehler-Auswertung (Mini pro Übung + Gesamt in Stufe 4) ---------- */
+.mini-auswertung{
+  display:none;
+  margin-top:8px;
+  font-size:.85rem;
+  color:#92400e;
+  background:#fff9e6;
+  border-left:4px solid #f0b429;
+  padding:6px 10px;
+  border-radius:0 6px 6px 0;
+}
+.mini-auswertung.zeigen{display:block;}
+
+.gesamtauswertung{
+  margin:16px 0;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.fehlerbalken-zeile{
+  display:grid;
+  grid-template-columns:44px 1fr 44px;
+  align-items:center;
+  gap:10px;
+}
+.fehlerbalken-label{
+  font-family:"Courier New", monospace;
+  font-size:1.1rem;
+  font-weight:800;
+  color:var(--text);
+  text-align:center;
+  background:var(--bg);
+  border-radius:8px;
+  padding:4px 0;
+}
+.fehlerbalken-spur{
+  height:18px;
+  background:var(--bg);
+  border-radius:10px;
+  overflow:hidden;
+}
+.fehlerbalken-fuellung{
+  height:100%;
+  background:linear-gradient(90deg, #f0b429, var(--warn));
+  border-radius:10px;
+  transition:width .4s;
+  print-color-adjust:exact;
+  -webkit-print-color-adjust:exact;
+}
+.fehlerbalken-wert{
+  font-size:.85rem;
+  font-weight:700;
+  color:var(--text-soft);
+  text-align:right;
+}
+
+/* ---------- Live-Vergleich-Tippkomponente ---------- */
+.tipp-block{
+  border:2px solid var(--border);
+  border-radius:var(--radius);
+  padding:18px 20px;
+  margin:16px 0;
+  background:#fffefb;
+}
+.tipp-block .zeile-label{
+  font-size:.78rem;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  color:var(--text-soft);
+  margin-bottom:8px;
+  font-weight:700;
+}
+.zieltext{
+  font-family: "Courier New", monospace;
+  font-size:1.3rem;
+  letter-spacing:1px;
+  padding:10px 12px;
+  background:#f2efe8;
+  border-radius:8px;
+  margin-bottom:8px;
+  overflow-wrap:break-word;
+  line-height:1.7;
+}
+.zieltext span.char-ok{color:var(--ok); background:var(--ok-soft); border-radius:3px;}
+.zieltext span.char-fehler{color:var(--warn); background:var(--warn-soft); border-radius:3px; text-decoration:underline wavy var(--warn);}
+.zieltext span.char-offen{color:#9a9285;}
+.zieltext span.char-aktiv{background:#fde68a; border-radius:3px; outline:2px solid #f0b429;}
+
+.tipp-eingabe{
+  width:100%;
+  font-family:"Courier New", monospace;
+  font-size:1.3rem;
+  letter-spacing:1px;
+  padding:10px 12px;
+  border:2px solid var(--border);
+  border-radius:8px;
+  resize:vertical;
+  min-height:46px;
+}
+.tipp-eingabe:focus{outline:none; border-color:var(--accent);}
+
+.tipp-stats{
+  display:flex;
+  gap:18px;
+  flex-wrap:wrap;
+  margin-top:10px;
+  font-size:.85rem;
+}
+.tipp-stats .stat{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  background:var(--bg);
+  padding:5px 10px;
+  border-radius:20px;
+}
+.tipp-stats .stat b{color:var(--text);}
+.btn-reset{
+  margin-top:10px;
+  border:1.5px solid var(--border);
+  background:white;
+  padding:6px 14px;
+  border-radius:20px;
+  cursor:pointer;
+  font-size:.85rem;
+  color:var(--text-soft);
+}
+.btn-reset:hover{border-color:var(--accent); color:var(--accent);}
+
+.btn-druck-klein{
+  margin-top:10px;
+  margin-left:8px;
+  border:1.5px solid var(--border);
+  background:white;
+  padding:6px 14px;
+  border-radius:20px;
+  cursor:pointer;
+  font-size:.85rem;
+  color:var(--text-soft);
+}
+.btn-druck-klein:hover{border-color:var(--accent); color:var(--accent);}
+
+/* ---------- Korrektur-Sperre ---------- */
+.sperr-schalter{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:.85rem;
+  color:var(--text-soft);
+  background:var(--bg);
+  padding:5px 10px;
+  border-radius:20px;
+  cursor:pointer;
+  user-select:none;
+}
+.sperr-schalter input{accent-color:var(--accent); cursor:pointer;}
+.sperr-schalter.fixiert{
+  opacity:.6;
+  cursor:not-allowed;
+}
+.sperr-schalter.fixiert input{cursor:not-allowed;}
+.sperr-schalter.fixiert::after{
+  content:"🔒 festgelegt";
+  font-size:.78rem;
+  font-style:italic;
+  margin-left:2px;
+}
+
+.status-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  font-size:.85rem;
+  font-weight:700;
+  padding:5px 10px;
+  border-radius:20px;
+}
+.status-badge.offen{background:var(--ok-soft); color:#166534;}
+.status-badge.gesperrt{background:var(--warn-soft); color:#991b1b;}
+
+.frei-textarea.gesperrt, .tipp-eingabe.gesperrt{
+  background:#faf7f0;
+  border-color:#e0b400;
+}
+
+/* ---------- Freie Textfelder (Stufe 2/3) ---------- */
+.uebung-gruppe{
+  margin-bottom:26px;
+}
+.uebung-gruppe h3{
+  font-size:1.05rem;
+  color:#1e3a5f;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:4px;
+}
+.uebung-gruppe .hinweis{
+  font-size:.85rem;
+  color:var(--text-soft);
+  margin:0 0 10px;
+}
+.vorlage-text{
+  font-family:"Courier New", monospace;
+  font-size:1.05rem;
+  background:#f2efe8;
+  padding:10px 12px;
+  border-radius:8px;
+  white-space:pre-wrap;
+  margin-bottom:8px;
+  line-height:1.8;
+}
+.frei-textarea{
+  width:100%;
+  min-height:90px;
+  font-family:"Courier New", monospace;
+  font-size:1.05rem;
+  padding:10px 12px;
+  border:2px solid var(--border);
+  border-radius:8px;
+  resize:vertical;
+}
+.frei-textarea:focus{outline:none; border-color:var(--accent);}
+
+.pyramide-box{
+  font-family:"Courier New", monospace;
+  font-size:1.05rem;
+  background:#f2efe8;
+  padding:14px 12px;
+  border-radius:8px;
+  text-align:center;
+  line-height:1.9;
+  margin-bottom:8px;
+}
+
+/* ---------- Sicherung: Multiple Choice & Zuordnung ---------- */
+.quiz-frage{
+  border:2px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px 18px;
+  margin-bottom:16px;
+  background:#fffefb;
+}
+.quiz-frage p.frage-text{
+  font-weight:700;
+  margin:0 0 12px;
+  font-size:1.02rem;
+}
+.quiz-optionen{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:10px;
+}
+.quiz-option{
+  border:2px solid var(--border);
+  background:white;
+  border-radius:10px;
+  padding:10px 12px;
+  cursor:pointer;
+  font-size:.95rem;
+  text-align:left;
+  transition:.15s;
+}
+.quiz-option:hover{border-color:var(--accent);}
+.quiz-option.gewaehlt{border-color:var(--accent); background:var(--accent-soft);}
+.quiz-option.richtig{border-color:var(--ok); background:var(--ok-soft); font-weight:700;}
+.quiz-option.falsch{border-color:var(--warn); background:var(--warn-soft);}
+.quiz-option:disabled{cursor:default;}
+
+.zuordnung-wrap{
+  display:flex;
+  gap:24px;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin-top:8px;
+}
+.zuordnung-spalte{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  min-width:140px;
+}
+.zuordnung-item{
+  border:2px solid var(--border);
+  border-radius:10px;
+  padding:10px 14px;
+  background:white;
+  text-align:center;
+  font-weight:700;
+  cursor:grab;
+  user-select:none;
+}
+.zuordnung-item.taste{
+  font-family:"Courier New", monospace;
+  font-size:1.2rem;
+  color:var(--accent);
+}
+.zuordnung-item.finger{
+  font-size:.85rem;
+  font-weight:500;
+  cursor:default;
+  min-height:44px;
+  display:flex;align-items:center;justify-content:center;
+  border-style:dashed;
+}
+.zuordnung-item.finger.belegt{
+  border-style:solid;
+  background:var(--accent-soft);
+}
+.zuordnung-item.finger.richtig{border-color:var(--ok); background:var(--ok-soft);}
+.zuordnung-item.finger.falsch{border-color:var(--warn); background:var(--warn-soft);}
+.zuordnung-item.taste.verwendet{opacity:.35; cursor:default;}
+
+.auswertung-box{
+  margin-top:14px;
+  padding:12px 16px;
+  border-radius:10px;
+  font-weight:700;
+  display:none;
+}
+.auswertung-box.zeigen{display:block;}
+.auswertung-box.gut{background:var(--ok-soft); color:#166534;}
+.auswertung-box.mittel{background:#fef3c7; color:#92400e;}
+.auswertung-box.schlecht{background:var(--warn-soft); color:#991b1b;}
+
+/* ---------- Hausaufgabe ---------- */
+.ha-liste{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin:16px 0 24px;
+}
+.ha-eintrag{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  border:2px solid var(--border);
+  border-radius:12px;
+  padding:12px 16px;
+  background:#fffefb;
+}
+.ha-eintrag input[type=checkbox]{
+  width:20px;height:20px;
+  margin-top:2px;
+  flex-shrink:0;
+  accent-color: var(--accent);
+}
+.ha-eintrag .ha-text{flex:1;}
+.ha-eintrag .ha-text b{display:block; margin-bottom:2px;}
+.ha-eintrag .ha-vorlage{
+  font-family:"Courier New", monospace;
+  font-size:.95rem;
+  color:var(--text-soft);
+  background:var(--bg);
+  padding:6px 8px;
+  border-radius:6px;
+  margin-top:6px;
+  white-space:pre-wrap;
+}
+
+/* ---------- Buttons / Aktionsleiste ---------- */
+.aktionsleiste{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:30px;
+  padding-top:18px;
+  border-top:2px solid var(--border);
+}
+.aktionsleiste .rechts{display:flex; gap:10px; flex-wrap:wrap;}
+button.btn{
+  border:none;
+  padding:11px 20px;
+  border-radius:24px;
+  font-weight:700;
+  font-size:.95rem;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  transition:.15s;
+}
+button.btn.primary{background:var(--accent); color:white;}
+button.btn.primary:hover{background:#0c5d55;}
+button.btn.secondary{background:var(--bg); color:var(--text); border:1.5px solid var(--border);}
+button.btn.secondary:hover{border-color:var(--accent); color:var(--accent);}
+button.btn.ghost{background:transparent; color:var(--text-soft); border:1.5px solid var(--border);}
+button.btn:disabled{opacity:.4; cursor:not-allowed;}
+
+/* ---------- Fortschrittsleiste oben ---------- */
+.fortschritt-gesamt{
+  max-width:980px;
+  margin:0 auto;
+  padding:8px 20px 0;
+}
+.fortschritt-gesamt .leiste{
+  height:8px;
+  background:rgba(255,255,255,.25);
+  border-radius:4px;
+  overflow:hidden;
+}
+.fortschritt-gesamt .fuellung{
+  height:100%;
+  background:#f0b429;
+  border-radius:4px;
+  transition:width .4s;
+  width:20%;
+}
+
+/* ---------- Druckansicht ---------- */
+@media print{
+  header.top{background:none !important; color:#000 !important; box-shadow:none; padding:6px 0;}
+  header.top .buchstaben span{border-color:#000; background:none; color:#000;}
+  nav.stufen, .aktionsleiste, .btn-reset, .btn-druck-klein, .fortschritt-gesamt, .tipp-eingabe, .frei-textarea, .sperr-schalter{display:none !important;}
+  section.stufe{display:block !important; page-break-after:always;}
+  main{box-shadow:none; padding:0 6mm;}
+  body{padding-bottom:0; background:white;}
+  .quiz-option{border-color:#000;}
+  .griffweg-karte, .tipp-block, .quiz-frage, .ha-eintrag, .uebung-gruppe{break-inside:avoid; border-color:#999;}
+  a[href]:after{content:"";}
+  .status-badge{border:1.5px solid #000 !important; background:none !important; color:#000 !important;}
+  .status-badge.gesperrt::after{content:" 🔒";}
+  .status-badge.offen::after{content:" 🔓";}
+}
+
+/* Einzeldruck: eigenes Print-Overlay, das per JS mit einem Klon des
+   gewünschten Abschnitts gefüllt wird. So bleiben Grid/Flex-Layouts
+   des Originals exakt erhalten (kein fragiles "display:revert" auf
+   verschachtelten Elementen nötig). */
+#druckOverlay{display:none;}
+@media print{
+  body.druck-einzeln > *:not(#druckOverlay){display:none !important;}
+  body.druck-einzeln #druckOverlay{
+    display:block !important;
+    padding:6mm;
+  }
+  body.druck-einzeln #druckOverlay .aktionsleiste,
+  body.druck-einzeln #druckOverlay .btn-reset,
+  body.druck-einzeln #druckOverlay .btn-druck-klein,
+  body.druck-einzeln #druckOverlay .sperr-schalter,
+  body.druck-einzeln #druckOverlay .tipp-eingabe{display:none !important;}
+  body.druck-einzeln #druckOverlay input[type=checkbox]{
+    -webkit-appearance:none; appearance:none;
+    width:16px; height:16px;
+    border:1.5px solid #000; border-radius:3px;
+    display:inline-block !important;
+    position:relative;
+  }
+  body.druck-einzeln #druckOverlay input[type=checkbox]:checked::after{
+    content:"✓"; position:absolute; left:1px; top:-3px; font-size:13px;
+  }
+  body.druck-einzeln #druckOverlay .frei-textarea{
+    display:block !important;
+    border:1px solid #ccc !important;
+    background:#fafafa !important;
+    resize:none;
+    color:#000;
+    font-family:"Courier New", monospace;
+    white-space:pre-wrap;
+  }
+  body.druck-einzeln #druckOverlay .status-badge{border:1.5px solid #000 !important; background:none !important; color:#000 !important;}
+}
+@media print and (max-width:0){} /* Platzhalter, falls spätere Seitenformate ergänzt werden */
+
+/* ---------- Responsive ---------- */
+@media (max-width:640px){
+  header.top h1{font-size:1.4rem;}
+  main{padding:20px 14px 28px;}
+  .zieltext, .tipp-eingabe, .vorlage-text, .frei-textarea{font-size:1.05rem;}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>
+    <span class="buchstaben">
+      <span style="border-color:var(--farbe-d); background:rgba(37,99,235,.25)">E</span>
+      <span style="border-color:var(--farbe-k); background:rgba(220,38,38,.25)">I</span>
+    </span>
+    Die Griffe zum E und I
+  </h1>
+  <p class="sub">10-Finger-Tastschreiben · Übungstool</p>
+</header>
+
+<div class="fortschritt-gesamt">
+  <div class="leiste"><div class="fuellung" id="gesamtFortschritt"></div></div>
+</div>
+
+<nav class="stufen" id="stufenNav">
+  <button data-stufe="1" class="active"><span class="zahl">1</span><span class="icon">🔍</span>Erarbeitung</button>
+  <button data-stufe="2"><span class="zahl">2</span><span class="icon">⌨️</span>Griffwegübung</button>
+  <button data-stufe="3"><span class="zahl">3</span><span class="icon">📝</span>Schreibfluss</button>
+  <button data-stufe="4"><span class="zahl">4</span><span class="icon">✅</span>Sicherung</button>
+  <button data-stufe="5"><span class="zahl">5</span><span class="icon">🏠</span>Hausaufgabe</button>
+</nav>
+
+<main>
+
+  <!-- ============================================================ -->
+  <!-- STUFE 1 — ERARBEITUNG -->
+  <!-- ============================================================ -->
+  <section class="stufe active" id="stufe1">
+    <h2 class="stufe-titel"><span class="badge">1</span>Erarbeitung der Griffwege</h2>
+    <p class="stufe-intro">Schau dir an, wie deine Finger zum <b>E</b> und zum <b>I</b> greifen. Fülle danach die Merksätze aus und übe den Griffweg im Tippfeld.</p>
+
+    <div class="legende">
+      <span><i style="background:var(--farbe-d)"></i> linker Mittelfinger (Grundtaste D)</span>
+      <span><i style="background:var(--farbe-k)"></i> rechter Mittelfinger (Grundtaste K)</span>
+    </div>
+
+    <div class="tastatur-wrap">
+      <svg id="tastaturSVG" viewBox="0 0 720 260" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="tastatur-steuerung">
+      <button id="tastaturBtnZurueck" class="btn ghost klein" onclick="tastaturZurueck()">← Zurück</button>
+      <p id="tastaturSchrittText" class="tastatur-schritt-text"></p>
+      <button id="tastaturBtnWeiter" class="btn primary klein" onclick="tastaturWeiter()">Weiter →</button>
+      <button class="btn ghost klein" onclick="tastaturVonVorne()">↺ Von vorne</button>
+    </div>
+
+    <hr class="trenner">
+
+    <h3 style="color:#1e3a5f;">✍️ Griffwege schriftlich festhalten</h3>
+    <p class="hinweis">Wähle für jeden Buchstaben den richtigen Finger und die richtige Grundtaste aus.</p>
+    <div class="griffweg-karten" id="block_griffwegkarten"></div>
+    <button class="btn-druck-klein" onclick="druckeAbschnitt('block_griffwegkarten')">🖨️ Nur diese Karten drucken</button>
+
+    <hr class="trenner">
+
+    <h3 style="color:#1e3a5f;">⌨️ Griffwegübung mit Live-Kontrolle</h3>
+    <p class="hinweis">Tippe den Text unten ab. Richtige Zeichen werden grün, falsche rot markiert.</p>
+    <div id="liveTippBereich"></div>
+
+    <div class="aktionsleiste">
+      <button class="btn ghost" onclick="druckeSeite()">🖨️ Drucken / Speichern</button>
+      <div class="rechts">
+        <button class="btn primary" onclick="gehezuStufe(2)">Weiter zu Stufe 2 →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- STUFE 2 — GRIFFWEGÜBUNG (frei, ohne Live-Vergleich) -->
+  <!-- ============================================================ -->
+  <section class="stufe" id="stufe2">
+    <h2 class="stufe-titel"><span class="badge">2</span>Übungen der einzelnen Griffwege</h2>
+    <p class="stufe-intro">Tippe die Übungen ab. Richtige Zeichen werden grün, falsche rot markiert — Fehler und Fortschritt werden gezählt.</p>
+    <div id="stufe2Inhalt"></div>
+
+    <div class="aktionsleiste">
+      <button class="btn secondary" onclick="gehezuStufe(1)">← Zurück</button>
+      <div class="rechts">
+        <button class="btn ghost" onclick="druckeSeite()">🖨️ Drucken / Speichern</button>
+        <button class="btn primary" onclick="gehezuStufe(3)">Weiter zu Stufe 3 →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- STUFE 3 — INTEGRATION IN DEN SCHREIBFLUSS -->
+  <!-- ============================================================ -->
+  <section class="stufe" id="stufe3">
+    <h2 class="stufe-titel"><span class="badge">3</span>Integration in den Schreibfluss</h2>
+    <p class="stufe-intro">Jetzt kommen alle bisher gelernten Buchstaben zusammen. Tippe die Wörter, Sätze und kleinen Texte ab.</p>
+    <div id="stufe3Inhalt"></div>
+
+    <div class="aktionsleiste">
+      <button class="btn secondary" onclick="gehezuStufe(2)">← Zurück</button>
+      <div class="rechts">
+        <button class="btn ghost" onclick="druckeSeite()">🖨️ Drucken / Speichern</button>
+        <button class="btn primary" onclick="gehezuStufe(4)">Weiter zu Stufe 4 →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- STUFE 4 — SICHERUNG -->
+  <!-- ============================================================ -->
+  <section class="stufe" id="stufe4">
+    <h2 class="stufe-titel"><span class="badge">4</span>Sicherung</h2>
+    <p class="stufe-intro">Mach dir den Griffweg noch einmal bewusst: Beantworte die Fragen und ordne zu.</p>
+
+    <h3 style="color:#1e3a5f;">📉 Deine häufigsten Tastweg-Fehler</h3>
+    <p class="hinweis">Diese Auswertung fasst alle Schreibübungen dieser Sitzung zusammen (Stufe 1–3).</p>
+    <div class="gesamtauswertung" id="gesamtauswertungFehler"></div>
+    <button class="btn-druck-klein" onclick="druckeAbschnitt('gesamtauswertungFehler')">🖨️ Auswertung drucken</button>
+
+    <hr class="trenner">
+
+    <h3 style="color:#1e3a5f;">✅ Multiple Choice</h3>
+    <div id="quizBereich"></div>
+    <button class="btn-druck-klein" onclick="druckeAbschnitt('quizBereich')">🖨️ Multiple Choice drucken</button>
+
+    <hr class="trenner">
+
+    <h3 style="color:#1e3a5f;">🔗 Zuordnung: Taste ↔ Finger</h3>
+    <p class="hinweis">Klicke zuerst auf eine Taste, dann auf den passenden Finger.</p>
+    <div class="zuordnung-wrap" id="zuordnungBereich"></div>
+    <button class="btn secondary" style="margin-top:14px;" onclick="zuordnungAuswerten()">Zuordnung auswerten</button>
+    <div class="auswertung-box" id="zuordnungErgebnis"></div>
+    <button class="btn-druck-klein" onclick="druckeAbschnitt('zuordnungBereich')">🖨️ Zuordnung drucken</button>
+
+    <div class="aktionsleiste">
+      <button class="btn secondary" onclick="gehezuStufe(3)">← Zurück</button>
+      <div class="rechts">
+        <button class="btn ghost" onclick="druckeSeite()">🖨️ Drucken / Speichern</button>
+        <button class="btn primary" onclick="gehezuStufe(5)">Weiter zu Stufe 5 →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- STUFE 5 — HAUSAUFGABE -->
+  <!-- ============================================================ -->
+  <section class="stufe" id="stufe5">
+    <h2 class="stufe-titel"><span class="badge">5</span>Hausaufgabe</h2>
+    <p class="stufe-intro">Übe die folgenden Zeilen zu Hause noch einmal. Hake ab, was du geschafft hast, und speichere dir die Seite bei Bedarf als PDF.</p>
+    <div class="ha-liste" id="hausaufgabenListe"></div>
+    <button class="btn primary" style="margin-top:14px;" onclick="druckeAbschnitt('hausaufgabenListe')">📄 Hausaufgabe als PDF speichern</button>
+
+    <div class="aktionsleiste">
+      <button class="btn secondary" onclick="gehezuStufe(4)">← Zurück</button>
+      <div class="rechts">
+        <button class="btn ghost" onclick="druckeSeite()">🖨️ Alles drucken / als PDF speichern</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div id="druckOverlay"></div>
+
+<script>
+/* ============================================================
+   LEKTIONSDATEN — hier für andere Griffwege anpassen
+   ============================================================ */
+const LEKTION = {
+  titel: "Die Griffe zum E und I",
+  buchstaben: [
+    {zeichen:"E", grundtaste:"D", finger:"linker Mittelfinger", farbe:"var(--farbe-d)"},
+    {zeichen:"I", grundtaste:"K", finger:"rechter Mittelfinger", farbe:"var(--farbe-k)"}
+  ],
+
+  // Auswahlmöglichkeiten für die Dropdowns in Stufe 1 (schriftliche Fixierung).
+  // Für andere Griffwege einfach anpassen — die richtige Antwort kommt
+  // automatisch aus LEKTION.buchstaben (grundtaste / finger).
+  fingerOptionen: [
+    "linker kleiner Finger","linker Ringfinger","linker Mittelfinger","linker Zeigefinger",
+    "rechter Zeigefinger","rechter Mittelfinger","rechter Ringfinger","rechter kleiner Finger"
+  ],
+  grundtastenOptionen: ["A","S","D","F","J","K","L","Ö"],
+
+  // Stufe 1: Live-Vergleich-Übungen (Erarbeitung der reinen Griffwege)
+  liveUebungen: [
+    { label:"Griffwegübung", zeilen:["ded kik ded kik ded kik ded kik ded kik ded kik ded kik ded"] },
+    { label:"Erweiterung mit anderen Tasten der Grundstellung", zeilen:[
+        "dea kiö dea kiö dea kiö dea kiö dea kiö dea kiö dea kiö dea",
+        "asded ölkik asded ölkik asded ölkik asded ölkik asded ölkik"
+      ]
+    }
+  ],
+
+  // Stufe 2: freie Textfelder — Griffwegübungen / Erweiterungen / Wörter / Sätze
+  stufe2Gruppen: [
+    {
+      titel:"Erweiterung mit anderen Tasten der Grundstellung",
+      hinweis:"",
+      typ:"vorlage",
+      text:"si di fi si di fi si di fi si di fi si di fi si di fi si di\nle ke je le ke je le ke je le ke je le ke je le ke je le ke\n\nsei elf sei elf sei elf sei elf sei elf sei elf sei elf sei\nfee lik fee lik fee lik fee lik fee lik fee lik fee lik fee"
+    },
+    {
+      titel:"Weitere Griffwegübungen",
+      hinweis:"Aus den ergänzenden Übungen.",
+      typ:"vorlage",
+      text:"fde jki fde jki fde jki fde jki fde jki fde jki fde jki fde\neds ikl eds ikl eds ikl eds ikl eds ikl eds ikl eds ikl eds\n\nfdeds jkikl fdeds jkikl fdeds jkikl fdeds jkikl fdeds jkikl\nedesa ikilö edesa ikilö edesa ikilö edesa ikilö edesa ikilö\n\naia sis did eie fif aia sis did eie fif aia sis did eie fif\nöeö lel kek iei jej öeö lel kek iei jej öeö lel kek iei jej"
+    },
+    {
+      titel:"Wörter",
+      hinweis:"Übe die Wörter zeilenweise.",
+      typ:"vorlage",
+      text:"jede jede jede lila lila lila edel edel edel dies dies dies\njede jede lila lila edel edel dies dies jede lila edel dies\njede lila edel dies jede lila edel dies jede lila edel dies\n\ndes des des die die die elf elf elf sei sei sei öde öde öde\ndes des die die elf elf sei sei öde öde des die elf sei öde\ndie öde elf sei des öde sei die des elf sei öde des die elf\n\nfiel fiel lies lies löse löse dies dies seid seid eile eile\nfiel lies löse dies seid eile fiel lies löse dies seid eile\nlies fiel eile seid dies löse eile fiel dies löse lies seid\n\nalle alles die dies diese dieses sei seid es des löse leise\ndies sei es löse alle des seid diese alles leise die dieses\nleise dieses es alles dies die löse sei alle des seid diese\n\nfidel feile fasse ideal leise diese alles jedes lasse kesse\njedes kesse fidel lasse feile alles leise ideal diese fasse\nideal jedes diese kesse lasse fasse fidel feile alles leise\n\nideal leise ideal leise ideal leise ideal leise ideal leise\nlies löse lies löse lies löse lies löse lies löse lies löse\nlöse lies ideal leise löse lies ideal leise löse lies ideal\n\nfeile löse lies fasse lasse öle feile löse lies fasse lasse\njede alle seid diese ideal leise jede alle seid diese ideal\nfasse ideal jede feile leise alle diese seid löse alle lies\n\nsie die sei des öde elf öle sie die sei des öde elf öle sie\njede dies seid fiel alle löse jede dies seid fiel alle löse\nkesse leise diese lasse alles ideal fasse feile jedes fidel"
+    },
+    {
+      titel:"Pyramidenschreiben — als Abwechslung",
+      hinweis:"Tippe Zeile für Zeile, jede Zeile wird länger.",
+      typ:"pyramide",
+      text:"falls\nfalls sie\nfalls sie das\nfalls sie das alles\nfalls sie das alles leise\nfalls sie das alles leise las\nfalls sie das alles leise\nfalls sie das alles\nfalls sie das\nfalls sie\nfalls"
+    }
+  ],
+
+  // Stufe 3: kleiner Fließtext, der bisher gelernte Buchstaben verwendet
+  stufe3Texte: [
+    {
+      titel:"Übungstext",
+      text:"lies die feile. jede idee ist ideal. alle sind leise. sie sieht die dielen. fidel feile alles. jedes lied ist leise.\ndie kesse elfe sieht die feile. sie liest alles leise. fasse lasse dies. jede idee sei ideal."
+    }
+  ],
+
+  // Stufe 4: Multiple-Choice-Fragen zur Sicherung
+  quizFragen: [
+    {
+      frage:"Welcher Finger tippt die Taste E?",
+      optionen:["Linker Zeigefinger","Rechter Zeigefinger","Linker Mittelfinger","Rechter Kleiner Finger"],
+      richtig:2
+    },
+    {
+      frage:"Von welcher Grundtaste aus wird das E getippt?",
+      optionen:["A","S","D","F"],
+      richtig:2
+    },
+    {
+      frage:"Welcher Finger tippt die Taste I?",
+      optionen:["Linker Zeigefinger","Rechter Zeigefinger","Rechter Mittelfinger","Linker Mittelfinger"],
+      richtig:2
+    },
+    {
+      frage:"Von welcher Grundtaste aus wird das I getippt?",
+      optionen:["J","K","L","Ö"],
+      richtig:1
+    },
+    {
+      frage:"In welcher Tastenreihe liegen E und I?",
+      optionen:["Grundreihe","Obere Buchstabenreihe","Untere Buchstabenreihe","Zahlenreihe"],
+      richtig:1
+    },
+    {
+      frage:"Was bedeutet „ded“ als Übungsfolge?",
+      optionen:[
+        "Grundtaste – neue Taste – Grundtaste",
+        "Drei verschiedene neue Tasten",
+        "Nur die Grundtaste dreimal",
+        "Ein Wort auf Deutsch"
+      ],
+      richtig:0
+    }
+  ],
+
+  // Stufe 4: Zuordnung Taste -> Finger
+  zuordnung: [
+    {taste:"E", finger:"Linker Mittelfinger"},
+    {taste:"I", finger:"Rechter Mittelfinger"},
+    {taste:"D", finger:"Linker Mittelfinger"},
+    {taste:"K", finger:"Rechter Mittelfinger"}
+  ],
+
+  // Stufe 5: Hausaufgaben (Auswahl aus den Übungen)
+  hausaufgaben: [
+    {titel:"Griffweg wiederholen", vorlage:"ded kik ded kik ded kik ded kik ded kik ded kik ded kik ded"},
+    {titel:"Erweiterung", vorlage:"dea kiö dea kiö dea kiö dea kiö dea kiö dea kiö dea kiö dea"},
+    {titel:"Wörter üben", vorlage:"jede lila edel dies jede lila edel dies jede lila edel dies"},
+    {titel:"Wörter üben (2)", vorlage:"sie die sei des öde elf öle sie die sei des öde elf öle sie"},
+    {titel:"Pyramide schreiben", vorlage:"falls sie das alles leise las"},
+    {titel:"Sätze üben", vorlage:"die kesse elfe sieht die feile. sie liest alles leise. fasse lasse dies. jede idee sei ideal."},
+    {titel:"Textübung", vorlage:"lies die feile. jede idee ist ideal. alle sind leise. sie sieht die dielen. fidel feile alles. jedes lied ist leise."}
+  ]
+};
+
+/* ============================================================
+   TASTATUR-SVG — Größe/Position sind für ein QWERTZ-Layout
+   Für andere Griffwege: einfach LEKTION.buchstaben anpassen,
+   die Funktion sucht die passenden Tasten automatisch anhand
+   der 'zeichen'-Angabe unten in TASTEN_POSITIONEN.
+   ============================================================ */
+const TASTEN_POSITIONEN = {
+  // Zahlenreihe (nicht alle benötigt, aber vorhanden für spätere Erweiterung)
+  // Obere Buchstabenreihe
+  Q:{x:40,y:60}, W:{x:80,y:60}, E:{x:120,y:60}, R:{x:160,y:60}, T:{x:200,y:60},
+  Z:{x:240,y:60}, U:{x:280,y:60}, I:{x:320,y:60}, O:{x:360,y:60}, P:{x:400,y:60}, UE:{x:440,y:60,label:"Ü"},
+  // Grundreihe
+  A:{x:55,y:110}, S:{x:95,y:110}, D:{x:135,y:110}, F:{x:175,y:110}, G:{x:215,y:110},
+  H:{x:255,y:110}, J:{x:295,y:110}, K:{x:335,y:110}, L:{x:375,y:110}, OE:{x:415,y:110,label:"Ö"}, AE:{x:455,y:110,label:"Ä"},
+  // Untere Buchstabenreihe
+  Y:{x:75,y:160}, X:{x:115,y:160}, C:{x:155,y:160}, V:{x:195,y:160}, B:{x:235,y:160},
+  N:{x:275,y:160}, M:{x:315,y:160}
+};
+
+// Die Tastatur wird interaktiv in Schritten aufgebaut: Schritt 0 zeigt nur
+// die neutrale Tastatur mit der Grundstellung, jeder weitere Klick auf
+// "Weiter" fügt sichtbar ein Element hinzu (Grundtasten-Markierung, dann
+// pro Buchstabe: Zielmarkierung + Pfeil), ohne vorherige Schritte zu entfernen.
+// Die Schrittfolge wird aus LEKTION.buchstaben generiert: erst alle
+// Grundtasten markieren, danach je Buchstabe (Ziel markieren, Pfeil zeichnen).
+let tastaturSchrittAktuell = 0;
+let tastaturSchritteGesamt = 0;
+
+function tastaturSchrittListe(){
+  const schritte = [{ typ:"grundtasten" }];
+  LEKTION.buchstaben.forEach(b=>{
+    schritte.push({ typ:"ziel", buchstabe:b });
+    schritte.push({ typ:"pfeil", buchstabe:b });
+  });
+  return schritte;
+}
+
+function svgKoordinate(zeichen){
+  const pos = TASTEN_POSITIONEN[zeichen];
+  if(!pos) return null;
+  const skala = 1.55;
+  return { x: pos.x*skala+20, y: pos.y*skala };
+}
+
+function baueTastaturSVG(){
+  const svg = document.getElementById("tastaturSVG");
+
+  // Statische Grundlage: alle Tasten grau + Grundstellung gestrichelt.
+  // Das steht von Anfang an da, nur die buchstabenspezifischen Schritte
+  // (Grundtasten-Markierung, Zielmarkierung, Pfeile) kommen per Klick dazu.
+  let inhalt = "";
+  for(const [zeichen,pos] of Object.entries(TASTEN_POSITIONEN)){
+    const label = pos.label || zeichen;
+    const k = svgKoordinate(zeichen);
+    inhalt += `<rect x="${k.x-16}" y="${k.y-16}" width="32" height="32" rx="7"
+                fill="#eae5da" stroke="#d8d0c0" stroke-width="1.5"/>
+               <text x="${k.x}" y="${k.y+5}" font-size="13" text-anchor="middle" fill="#8a8270" font-family="monospace">${label}</text>`;
+  }
+  const grundstellung = ["A","S","D","F","J","K","L","OE"];
+  for(const t of grundstellung){
+    const k = svgKoordinate(t);
+    inhalt += `<rect x="${k.x-16}" y="${k.y-16}" width="32" height="32" rx="7"
+                fill="none" stroke="#0f766e" stroke-width="2" stroke-dasharray="3,2"/>`;
+  }
+  svg.dataset.basis = inhalt; // Basis merken, Schritte werden immer wieder darauf aufgebaut
+  svg.innerHTML = `<g id="tastaturBasis">${inhalt}</g><g id="tastaturSchritte"></g>`;
+
+  tastaturSchritteGesamt = tastaturSchrittListe().length;
+  tastaturSchrittAktuell = 0;
+  tastaturSchritteRendern();
+}
+
+function tastaturSchrittHTML(schritt){
+  if(schritt.typ === "grundtasten"){
+    // Grundtasten aller Buchstaben dieser Lektion hervorheben (z. B. D und K).
+    return LEKTION.buchstaben.map(b=>{
+      const k = svgKoordinate(b.grundtaste);
+      if(!k) return "";
+      return `<rect x="${k.x-16}" y="${k.y-16}" width="32" height="32" rx="7"
+                fill="${b.farbe}" opacity="0.18" stroke="${b.farbe}" stroke-width="2.5"/>`;
+    }).join("");
+  }
+  if(schritt.typ === "ziel"){
+    const b = schritt.buchstabe;
+    const k = svgKoordinate(b.zeichen);
+    if(!k) return "";
+    return `<rect x="${k.x-16}" y="${k.y-16}" width="32" height="32" rx="7"
+              fill="${b.farbe}" opacity="0.35" stroke="${b.farbe}" stroke-width="2.5"/>
+            <text x="${k.x}" y="${k.y+5}" font-size="14" font-weight="800" text-anchor="middle" fill="#2b2620" font-family="monospace">${b.zeichen}</text>`;
+  }
+  if(schritt.typ === "pfeil"){
+    const b = schritt.buchstabe;
+    const start = svgKoordinate(b.grundtaste);
+    const ziel = svgKoordinate(b.zeichen);
+    if(!start || !ziel) return "";
+    const markerId = "pfeil_"+b.zeichen;
+    return `<defs><marker id="${markerId}" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 z" fill="${b.farbe}"/></marker></defs>
+            <line x1="${start.x}" y1="${start.y-18}" x2="${ziel.x}" y2="${ziel.y+20}" stroke="${b.farbe}" stroke-width="2.5"
+                  marker-end="url(#${markerId})" opacity="0.85"/>`;
+  }
+  return "";
+}
+
+function tastaturSchritteRendern(){
+  const gruppe = document.getElementById("tastaturSchritte");
+  if(!gruppe) return;
+  const schritte = tastaturSchrittListe();
+  let inhalt = "";
+  for(let i=0; i<tastaturSchrittAktuell; i++){
+    inhalt += tastaturSchrittHTML(schritte[i]);
+  }
+  gruppe.innerHTML = inhalt;
+
+  const anzeige = document.getElementById("tastaturSchrittText");
+  const btnZurueck = document.getElementById("tastaturBtnZurueck");
+  const btnWeiter = document.getElementById("tastaturBtnWeiter");
+  if(anzeige){
+    anzeige.textContent = `Schritt ${tastaturSchrittAktuell} von ${tastaturSchritteGesamt}`;
+  }
+  if(btnZurueck) btnZurueck.disabled = (tastaturSchrittAktuell === 0);
+  if(btnWeiter) btnWeiter.disabled = (tastaturSchrittAktuell >= tastaturSchritteGesamt);
+}
+
+function tastaturWeiter(){
+  if(tastaturSchrittAktuell < tastaturSchritteGesamt){
+    tastaturSchrittAktuell++;
+    tastaturSchritteRendern();
+  }
+}
+
+function tastaturZurueck(){
+  if(tastaturSchrittAktuell > 0){
+    tastaturSchrittAktuell--;
+    tastaturSchritteRendern();
+  }
+}
+
+function tastaturVonVorne(){
+  tastaturSchrittAktuell = 0;
+  tastaturSchritteRendern();
+}
+
+/* ============================================================
+   STUFE 1 — GRIFFWEG-KARTEN MIT DROPDOWNS (schriftliche Fixierung)
+   ============================================================ */
+function mischen(array){
+  return [...array].sort(()=>Math.random()-0.5);
+}
+
+function baueOptionsListe(select, optionen, platzhalter){
+  select.innerHTML = `<option value="" disabled selected>${platzhalter}</option>` +
+    optionen.map(opt=>`<option value="${opt}">${opt}</option>`).join("");
+}
+
+function baueGriffwegkarten(){
+  const wrap = document.getElementById("block_griffwegkarten");
+  wrap.innerHTML = "";
+
+  LEKTION.buchstaben.forEach((b, idx)=>{
+    const id = `karte_${idx}`;
+    const karte = document.createElement("div");
+    karte.className = "griffweg-karte";
+    karte.id = "gwkarte_"+id;
+    karte.innerHTML = `
+      <h3><span class="buchstabe-kreis" style="background:${b.farbe}">${b.zeichen}</span> Der Griffweg zum ${b.zeichen}</h3>
+      <p class="finger-info">Grundtaste: <b>${b.grundtaste}</b> → Zieltaste: <b>${b.zeichen}</b> (obere Reihe)</p>
+      <div class="merksatz">Der ${b.finger} greift von ${b.grundtaste} schräg nach links oben zum ${b.zeichen}.</div>
+      <div class="fixierung-feld">
+        <label>Welcher Finger tippt das ${b.zeichen}?</label>
+        <select id="fingerSelect_${id}"></select>
+      </div>
+      <div class="fixierung-feld">
+        <label>Von welcher Grundtaste aus?</label>
+        <select id="grundtasteSelect_${id}"></select>
+      </div>
+      <div class="karten-aktionen">
+        <button class="btn-pruefen" onclick="kartePruefen('${id}', ${idx})">✓ Prüfen</button>
+      </div>
+      <div class="karten-ergebnis" id="karteErgebnis_${id}"></div>
+    `;
+    wrap.appendChild(karte);
+
+    baueOptionsListe(karte.querySelector(`#fingerSelect_${id}`), mischen(LEKTION.fingerOptionen), "Bitte wählen …");
+    baueOptionsListe(karte.querySelector(`#grundtasteSelect_${id}`), mischen(LEKTION.grundtastenOptionen), "Bitte wählen …");
+  });
+}
+
+function kartePruefen(id, idx){
+  const b = LEKTION.buchstaben[idx];
+  const fingerSelect = document.getElementById(`fingerSelect_${id}`);
+  const grundtasteSelect = document.getElementById(`grundtasteSelect_${id}`);
+  const ergebnis = document.getElementById(`karteErgebnis_${id}`);
+
+  fingerSelect.classList.remove("richtig","falsch");
+  grundtasteSelect.classList.remove("richtig","falsch");
+
+  if(!fingerSelect.value || !grundtasteSelect.value){
+    ergebnis.className = "karten-ergebnis zeigen schlecht";
+    ergebnis.textContent = "Bitte wähle beide Felder aus.";
+    return;
+  }
+
+  const fingerRichtig = fingerSelect.value === b.finger;
+  const grundtasteRichtig = grundtasteSelect.value === b.grundtaste;
+
+  fingerSelect.classList.add(fingerRichtig ? "richtig" : "falsch");
+  grundtasteSelect.classList.add(grundtasteRichtig ? "richtig" : "falsch");
+
+  ergebnis.className = "karten-ergebnis zeigen " + (fingerRichtig && grundtasteRichtig ? "gut" : "schlecht");
+  ergebnis.textContent = (fingerRichtig && grundtasteRichtig)
+    ? "Richtig! Beide Angaben stimmen. 🎉"
+    : "Noch nicht ganz richtig — schau dir die markierten Felder an.";
+
+  if(fingerRichtig && grundtasteRichtig) markiereStufeAlsErledigt(1);
+}
+
+/* ============================================================
+   STUFE 1 — LIVE-VERGLEICH-TIPPKOMPONENTE
+   ============================================================ */
+/* ============================================================
+   GENERISCHE TIPPFELD-KOMPONENTE
+   Wird für Stufe 1 (Griffwegübung), Stufe 2 (Griffwegübungen /
+   Wörter / Sätze), Stufe 3 (Schreibfluss-Texte) und die Hausaufgabe
+   verwendet — überall dort, wo ein Zieltext mit Live-Vergleich,
+   kumulativem Fehlerzähler, Fortschrittsanzeige und Korrektur-Sperre
+   benötigt wird. Mehrzeilige Vorlagen werden zeilenweise als eigene
+   Tippfelder mit gemeinsamem Fehler-/Fortschrittsstand geführt.
+   ============================================================ */
+
+// Fehler werden pro Tastendruck gezählt (kumulativ) — eine bereits korrigierte
+// Stelle bleibt in der Fehlerzahl erhalten. Nur Reset setzt auf 0 zurück.
+const zeilenFehlerZaehler = {};
+const zeilenLetzteLaenge = {};
+
+// Fehler-Auswertung nach Zielzeichen: zählt, welches Zeichen (Zielbuchstabe)
+// am häufigsten falsch getippt wurde — pro Übung (id) UND global über alle
+// Übungen (für die Gesamtauswertung in Stufe 4).
+const zeichenFehlerProUebung = {};   // { id: { "e": 3, "i": 1, ... } }
+const zeichenFehlerGesamt = {};      // { "e": 5, "i": 2, ... } — über alle Übungen
+
+function zeichenFehlerErfassen(id, zielZeichen){
+  if(zielZeichen === undefined || zielZeichen === "\n") return; // Zeilenumbrüche zählen nicht als Tastweg-Fehler
+  const zeichen = zielZeichen === " " ? "␣ (Leertaste)" : zielZeichen;
+
+  if(!zeichenFehlerProUebung[id]) zeichenFehlerProUebung[id] = {};
+  zeichenFehlerProUebung[id][zeichen] = (zeichenFehlerProUebung[id][zeichen]||0) + 1;
+
+  zeichenFehlerGesamt[zeichen] = (zeichenFehlerGesamt[zeichen]||0) + 1;
+
+  aktualisiereMiniAuswertung(id);
+  aktualisiereGesamtauswertung();
+}
+
+function zeichenFehlerZuruecksetzen(id){
+  zeichenFehlerProUebung[id] = {};
+  aktualisiereMiniAuswertung(id);
+  aktualisiereGesamtauswertung();
+}
+
+// Gibt die Top-N Zeichen (häufigste zuerst) aus einem { zeichen: anzahl }-Objekt zurück.
+function topFehlerzeichen(fehlerObjekt, anzahl){
+  return Object.entries(fehlerObjekt)
+    .filter(([,n])=>n>0)
+    .sort((a,b)=> b[1]-a[1])
+    .slice(0, anzahl);
+}
+
+// Aktualisiert die kleine Fehler-Auswertung direkt unter einer einzelnen Übung.
+function aktualisiereMiniAuswertung(id){
+  const box = document.getElementById("miniAuswertung_"+id);
+  if(!box) return;
+  const daten = zeichenFehlerProUebung[id] || {};
+  const top = topFehlerzeichen(daten, 3);
+  if(top.length === 0){
+    box.innerHTML = "";
+    box.classList.remove("zeigen");
+    return;
+  }
+  box.classList.add("zeigen");
+  box.innerHTML = "🔍 Am häufigsten falsch: " + top.map(([z,n])=>`<b>${z}</b> (${n}×)`).join(", ");
+}
+
+// Aktualisiert die Gesamtauswertung in Stufe 4, sofern das Zielelement existiert.
+function aktualisiereGesamtauswertung(){
+  const box = document.getElementById("gesamtauswertungFehler");
+  if(!box) return;
+  const top = topFehlerzeichen(zeichenFehlerGesamt, 8);
+  if(top.length === 0){
+    box.innerHTML = `<p class="hinweis">Noch keine Fehler erfasst — sobald in den Übungen getippt wurde, erscheint hier eine Auswertung.</p>`;
+    return;
+  }
+  const maxWert = top[0][1];
+  box.innerHTML = top.map(([zeichen,anzahl])=>{
+    const breite = Math.max(8, Math.round((anzahl/maxWert)*100));
+    return `
+      <div class="fehlerbalken-zeile">
+        <span class="fehlerbalken-label">${zeichen}</span>
+        <div class="fehlerbalken-spur"><div class="fehlerbalken-fuellung" style="width:${breite}%"></div></div>
+        <span class="fehlerbalken-wert">${anzahl}×</span>
+      </div>`;
+  }).join("");
+}
+
+// baut ein einzelnes Tippfeld (Zieltext + Eingabe + Stats + Sperre) in
+// "container" ein. gibt das erzeugte Wrapper-Element zurück.
+function baueEinzelnesTippfeld(container, id, zieltext, labelText, stufeNr, zeilenAnzahl){
+  const rows = zeilenAnzahl || 1;
+  const block = document.createElement("div");
+  block.className = "tipp-block";
+  block.id = "block_"+id;
+  block.innerHTML = `
+    ${labelText?`<div class="zeile-label">${labelText}</div>`:""}
+    <div class="zieltext" id="ziel_${id}"></div>
+    <textarea class="tipp-eingabe" id="eingabe_${id}" rows="${rows}" placeholder="Hier tippen …" autocomplete="off" autocorrect="off" spellcheck="false"></textarea>
+    <div class="tipp-stats">
+      <span class="stat">✅ Richtig: <b id="richtig_${id}">0</b></span>
+      <span class="stat">❌ Fehler (gesamt): <b id="fehler_${id}">0</b></span>
+      <span class="stat">📊 Fortschritt: <b id="prozent_${id}">0%</b></span>
+      <span class="status-badge offen" id="statusBadge_${id}">🔓 Korrektur offen</span>
+    </div>
+    <div class="mini-auswertung" id="miniAuswertung_${id}"></div>
+    <label class="sperr-schalter">
+      <input type="checkbox" id="sperren_${id}" onchange="sperreUmschalten('${id}')">
+      Korrektur sperren (kein Löschen mehr möglich)
+    </label>
+    <button class="btn-reset" onclick="liveTippReset('${id}', ${JSON.stringify(zieltext).replace(/"/g,'&quot;')})">↺ Zurücksetzen</button>
+    <button class="btn-druck-klein" onclick="druckeAbschnitt('block_${id}')">🖨️ Diese Übung drucken</button>
+  `;
+  container.appendChild(block);
+  renderZieltext(id, zieltext);
+  zeilenFehlerZaehler[id] = 0;
+  zeilenLetzteLaenge[id] = 0;
+  zeichenFehlerProUebung[id] = {};
+  const eingabe = block.querySelector(`#eingabe_${id}`);
+  eingabe.addEventListener("input", ()=> liveTippAuswerten(id, zieltext, stufeNr));
+  eingabe.addEventListener("keydown", (e)=> sperreKeydownFilter(e, id));
+  return block;
+}
+
+function renderZieltext(id, ziel){
+  const zielEl = document.getElementById("ziel_"+id);
+  zielEl.innerHTML = ziel.split("").map((ch,i)=>{
+    if(ch === "\n") return `<br data-i="${i}">`;
+    return `<span class="char-offen" data-i="${i}">${ch===" "?"&nbsp;":ch}</span>`;
+  }).join("");
+}
+
+function liveTippAuswerten(id, ziel, stufeNr){
+  const eingabe = document.getElementById("eingabe_"+id).value;
+  const spans = document.querySelectorAll(`#ziel_${id} span`);
+  let richtig=0;
+
+  // Sobald das erste Zeichen getippt wurde, wird der Sperr-Schalter fixiert:
+  // der aktuelle Zustand (an oder aus) kann bis zum Zurücksetzen nicht mehr
+  // geändert werden.
+  if(eingabe.length > 0){
+    const sperrCheckbox = document.getElementById("sperren_"+id);
+    if(sperrCheckbox && !sperrCheckbox.disabled){
+      sperrCheckbox.disabled = true;
+      const schalter = sperrCheckbox.closest(".sperr-schalter");
+      if(schalter) schalter.classList.add("fixiert");
+    }
+  }
+
+  // Neuer Tastendruck? Dann prüfen, ob das zuletzt eingegebene Zeichen falsch war,
+  // und ggf. den kumulativen Fehlerzähler erhöhen (nur beim Vorwärtstippen, nicht beim Löschen).
+  if(eingabe.length > zeilenLetzteLaenge[id]){
+    const posNeuesZeichen = eingabe.length - 1;
+    if(eingabe[posNeuesZeichen] !== ziel[posNeuesZeichen]){
+      zeilenFehlerZaehler[id] = (zeilenFehlerZaehler[id]||0) + 1;
+      zeichenFehlerErfassen(id, ziel[posNeuesZeichen]);
+    }
+  }
+  zeilenLetzteLaenge[id] = eingabe.length;
+
+  // spans stehen an data-i-Positionen im Zieltext (Zeilenumbrüche sind eigene
+  // <br>-Knoten dazwischen und werden hier übersprungen, zählen aber im
+  // Eingabe-Index ganz normal mit, da eingabe/ziel als reine Strings verglichen werden).
+  spans.forEach((span)=>{
+    const i = Number(span.dataset.i);
+    span.classList.remove("char-ok","char-fehler","char-aktiv","char-offen");
+    if(i < eingabe.length){
+      if(eingabe[i] === ziel[i]){ span.classList.add("char-ok"); richtig++; }
+      else { span.classList.add("char-fehler"); }
+    } else if(i === eingabe.length){
+      span.classList.add("char-aktiv");
+    } else {
+      span.classList.add("char-offen");
+    }
+  });
+  document.getElementById("richtig_"+id).textContent = richtig;
+  document.getElementById("fehler_"+id).textContent = zeilenFehlerZaehler[id]||0;
+  const prozent = Math.min(100, Math.round((eingabe.length/ziel.length)*100));
+  document.getElementById("prozent_"+id).textContent = prozent + "%";
+  if(eingabe.length >= ziel.length && stufeNr){ markiereStufeAlsErledigt(stufeNr); }
+}
+
+function liveTippReset(id, ziel){
+  document.getElementById("eingabe_"+id).value="";
+  renderZieltext(id, ziel);
+  zeilenFehlerZaehler[id] = 0;
+  zeilenLetzteLaenge[id] = 0;
+  document.getElementById("richtig_"+id).textContent = 0;
+  document.getElementById("fehler_"+id).textContent = 0;
+  document.getElementById("prozent_"+id).textContent = "0%";
+
+  // Die Mini-Auswertung dieser Übung wird zurückgesetzt (neuer Versuch).
+  // Die Gesamtauswertung in Stufe 4 bleibt bewusst kumulativ über die ganze
+  // Sitzung erhalten, damit sie ein verlässliches Gesamtbild zeigt.
+  if(zeichenFehlerProUebung[id]){
+    zeichenFehlerProUebung[id] = {};
+    aktualisiereMiniAuswertung(id);
+  }
+
+  // Zurücksetzen gibt auch den Sperr-Schalter wieder frei bedienbar — der
+  // Sperr-Zustand selbst (an/aus) bleibt dabei erhalten, nur die Fixierung
+  // wird aufgehoben.
+  const sperrCheckbox = document.getElementById("sperren_"+id);
+  if(sperrCheckbox){
+    sperrCheckbox.disabled = false;
+    const schalter = sperrCheckbox.closest(".sperr-schalter");
+    if(schalter) schalter.classList.remove("fixiert");
+  }
+}
+
+/* ============================================================
+   STUFE 1 — GRIFFWEGÜBUNG MIT LIVE-KONTROLLE
+   ============================================================ */
+function baueLiveTippBereich(){
+  const wrap = document.getElementById("liveTippBereich");
+  wrap.innerHTML = "";
+  LEKTION.liveUebungen.forEach((uebung, idxUebung)=>{
+    uebung.zeilen.forEach((zeile, idxZeile)=>{
+      const id = `live_${idxUebung}_${idxZeile}`;
+      baueEinzelnesTippfeld(wrap, id, zeile, uebung.label, 1);
+    });
+  });
+}
+
+/* ============================================================
+   STUFE 2 — GRIFFWEGÜBUNGEN / WÖRTER / SÄTZE MIT LIVE-KONTROLLE
+   ============================================================ */
+function baueStufe2(){
+  const wrap = document.getElementById("stufe2Inhalt");
+  wrap.innerHTML = "";
+  LEKTION.stufe2Gruppen.forEach((gruppe,i)=>{
+    const gruppenId = `s2_${i}`;
+    const div = document.createElement("div");
+    div.className = "uebung-gruppe";
+    div.id = "block_"+gruppenId;
+    const icon = gruppe.typ === "pyramide" ? "🔺" : "⌨️";
+    const titelZeile = document.createElement("h3");
+    titelZeile.textContent = `${icon} ${gruppe.titel}`;
+    div.appendChild(titelZeile);
+    if(gruppe.hinweis){
+      const hinweis = document.createElement("p");
+      hinweis.className = "hinweis";
+      hinweis.textContent = gruppe.hinweis;
+      div.appendChild(hinweis);
+    }
+    wrap.appendChild(div);
+
+    if(gruppe.typ === "pyramide"){
+      // Die gesamte Pyramide ist EIN zusammenhängendes Tippfeld —
+      // Zeilenumbrüche im Zieltext bleiben erhalten, SuS tippen mit
+      // Enter von Zeile zu Zeile weiter.
+      const zeilenzahl = gruppe.text.split("\n").length;
+      baueEinzelnesTippfeld(div, gruppenId, gruppe.text, "", 2, zeilenzahl);
+    } else {
+      // Jede Zeile der Vorlage wird ein eigenes Tippfeld mit Live-Vergleich.
+      const zeilen = gruppe.text.split("\n").filter(z=>z.trim().length>0);
+      zeilen.forEach((zeile, idxZeile)=>{
+        const id = `${gruppenId}_${idxZeile}`;
+        baueEinzelnesTippfeld(div, id, zeile, "", 2);
+      });
+    }
+
+    const druckBtn = document.createElement("button");
+    druckBtn.className = "btn-druck-klein";
+    druckBtn.textContent = "🖨️ Diese Übung drucken";
+    druckBtn.onclick = ()=> druckeAbschnitt("block_"+gruppenId);
+    div.appendChild(druckBtn);
+  });
+}
+
+/* ============================================================
+   STUFE 3 — SCHREIBFLUSS-TEXTE MIT LIVE-KONTROLLE
+   ============================================================ */
+function baueStufe3(){
+  const wrap = document.getElementById("stufe3Inhalt");
+  wrap.innerHTML = "";
+  LEKTION.stufe3Texte.forEach((t,i)=>{
+    const gruppenId = `s3_${i}`;
+    const div = document.createElement("div");
+    div.className = "uebung-gruppe";
+    div.id = "block_"+gruppenId;
+    const titelZeile = document.createElement("h3");
+    titelZeile.textContent = `📝 ${t.titel}`;
+    div.appendChild(titelZeile);
+    wrap.appendChild(div);
+
+    baueEinzelnesTippfeld(div, gruppenId, t.text, "", 3);
+
+    const druckBtn = document.createElement("button");
+    druckBtn.className = "btn-druck-klein";
+    druckBtn.textContent = "🖨️ Diesen Text drucken";
+    druckBtn.onclick = ()=> druckeAbschnitt("block_"+gruppenId);
+    div.appendChild(druckBtn);
+  });
+}
+
+/* ============================================================
+   STUFE 4 — QUIZ + ZUORDNUNG
+   ============================================================ */
+function baueQuiz(){
+  const wrap = document.getElementById("quizBereich");
+  wrap.innerHTML = "";
+  LEKTION.quizFragen.forEach((f,i)=>{
+    const div = document.createElement("div");
+    div.className = "quiz-frage";
+    div.innerHTML = `
+      <p class="frage-text">${i+1}. ${f.frage}</p>
+      <div class="quiz-optionen">
+        ${f.optionen.map((opt,j)=>`<button class="quiz-option" onclick="quizAntwort(this,${i},${j})">${opt}</button>`).join("")}
+      </div>
+    `;
+    wrap.appendChild(div);
+  });
+}
+
+function quizAntwort(btn, frageIdx, optIdx){
+  const frage = LEKTION.quizFragen[frageIdx];
+  const alleOptionen = btn.parentElement.querySelectorAll(".quiz-option");
+  alleOptionen.forEach(o=>o.disabled=true);
+  if(optIdx === frage.richtig){
+    btn.classList.add("richtig");
+  } else {
+    btn.classList.add("falsch");
+    alleOptionen[frage.richtig].classList.add("richtig");
+  }
+  pruefeQuizVollstaendig();
+}
+
+function pruefeQuizVollstaendig(){
+  const fragen = document.querySelectorAll(".quiz-frage");
+  const beantwortet = document.querySelectorAll(".quiz-option.richtig, .quiz-option.falsch");
+  if(fragen.length>0 && beantwortet.length >= fragen.length){
+    markiereStufeAlsErledigt(4);
+  }
+}
+
+let zuordnungAuswahlTaste = null;
+let zuordnungZustand = {}; // taste -> gewählter finger
+
+function baueZuordnung(){
+  const wrap = document.getElementById("zuordnungBereich");
+  wrap.innerHTML = "";
+  zuordnungZustand = {};
+
+  const tasten = LEKTION.zuordnung.map(z=>z.taste);
+  const finger = [...new Set(LEKTION.zuordnung.map(z=>z.finger))].sort(()=>Math.random()-0.5);
+  const tastenGemischt = [...tasten].sort(()=>Math.random()-0.5);
+
+  const spalteTasten = document.createElement("div");
+  spalteTasten.className = "zuordnung-spalte";
+  spalteTasten.innerHTML = `<div style="font-size:.8rem;color:var(--text-soft);text-align:center;margin-bottom:4px;">Tasten</div>`;
+  tastenGemischt.forEach(t=>{
+    const item = document.createElement("div");
+    item.className = "zuordnung-item taste";
+    item.textContent = t;
+    item.dataset.taste = t;
+    item.onclick = ()=> zuordnungTasteWaehlen(item);
+    spalteTasten.appendChild(item);
+  });
+
+  const spalteFinger = document.createElement("div");
+  spalteFinger.className = "zuordnung-spalte";
+  spalteFinger.innerHTML = `<div style="font-size:.8rem;color:var(--text-soft);text-align:center;margin-bottom:4px;">Finger</div>`;
+  finger.forEach(f=>{
+    const item = document.createElement("div");
+    item.className = "zuordnung-item finger";
+    item.textContent = f;
+    item.dataset.finger = f;
+    item.onclick = ()=> zuordnungFingerWaehlen(item);
+    spalteFinger.appendChild(item);
+  });
+
+  wrap.appendChild(spalteTasten);
+  wrap.appendChild(spalteFinger);
+  document.getElementById("zuordnungErgebnis").classList.remove("zeigen");
+}
+
+function zuordnungTasteWaehlen(el){
+  if(el.classList.contains("verwendet")) return;
+  document.querySelectorAll(".zuordnung-item.taste").forEach(t=>t.style.outline="none");
+  zuordnungAuswahlTaste = el.dataset.taste;
+  el.style.outline = "3px solid #f0b429";
+}
+
+function zuordnungFingerWaehlen(el){
+  if(!zuordnungAuswahlTaste) return;
+  zuordnungZustand[zuordnungAuswahlTaste] = el.dataset.finger;
+
+  const tasteEl = document.querySelector(`.zuordnung-item.taste[data-taste="${zuordnungAuswahlTaste}"]`);
+  tasteEl.classList.add("verwendet");
+  tasteEl.style.outline="none";
+
+  const markierung = document.createElement("div");
+  markierung.style.fontSize=".75rem";
+  markierung.style.marginTop="4px";
+  markierung.textContent = "→ " + zuordnungAuswahlTaste;
+  el.classList.add("belegt");
+  el.appendChild(markierung);
+
+  zuordnungAuswahlTaste = null;
+}
+
+function zuordnungAuswerten(){
+  let richtig=0;
+  const gesamt = LEKTION.zuordnung.length;
+  document.querySelectorAll(".zuordnung-item.finger").forEach(el=>{
+    el.classList.remove("richtig","falsch");
+  });
+  LEKTION.zuordnung.forEach(paar=>{
+    const gewaehlterFinger = zuordnungZustand[paar.taste];
+    const fingerEl = [...document.querySelectorAll(".zuordnung-item.finger")].find(f=>f.dataset.finger===paar.finger);
+    if(gewaehlterFinger === paar.finger){
+      richtig++;
+    } else if(fingerEl){
+      fingerEl.classList.add("falsch");
+    }
+  });
+  const box = document.getElementById("zuordnungErgebnis");
+  box.classList.add("zeigen");
+  const quote = richtig/gesamt;
+  box.className = "auswertung-box zeigen " + (quote>=0.8?"gut":quote>=0.5?"mittel":"schlecht");
+  box.textContent = `${richtig} von ${gesamt} richtig zugeordnet.` + (quote>=0.8?" Super gemacht! 🎉":" Schau dir die Griffwege noch einmal an.");
+  if(quote>=0.8) markiereStufeAlsErledigt(4);
+}
+
+/* ============================================================
+   STUFE 5 — HAUSAUFGABE
+   ============================================================ */
+function baueHausaufgaben(){
+  const wrap = document.getElementById("hausaufgabenListe");
+  wrap.innerHTML = "";
+  LEKTION.hausaufgaben.forEach((ha,i)=>{
+    const tippId = `ha_${i}`;
+    const div = document.createElement("div");
+    div.className = "ha-eintrag";
+    div.id = "block_"+tippId;
+    div.innerHTML = `
+      <input type="checkbox" id="haErledigt_${i}" onchange="pruefeHausaufgaben()">
+      <div class="ha-text">
+        <label for="haErledigt_${i}"><b>${ha.titel}</b></label>
+      </div>
+    `;
+    wrap.appendChild(div);
+    const textSpalte = div.querySelector(".ha-text");
+    baueEinzelnesTippfeld(textSpalte, tippId, ha.vorlage, "", 5);
+  });
+}
+
+function pruefeHausaufgaben(){
+  const boxen = document.querySelectorAll("#hausaufgabenListe input[id^=haErledigt_]");
+  const alle = boxen.length>0 && [...boxen].every(b=>b.checked);
+  if(alle) markiereStufeAlsErledigt(5);
+}
+
+/* ============================================================
+   NAVIGATION / FORTSCHRITT
+   ============================================================ */
+let erledigteStufen = new Set();
+
+function gehezuStufe(nr){
+  document.querySelectorAll("section.stufe").forEach(s=>s.classList.remove("active"));
+  document.getElementById("stufe"+nr).classList.add("active");
+  document.querySelectorAll("nav.stufen button").forEach(b=>b.classList.remove("active"));
+  document.querySelector(`nav.stufen button[data-stufe="${nr}"]`).classList.add("active");
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function markiereStufeAlsErledigt(nr){
+  erledigteStufen.add(nr);
+  const btn = document.querySelector(`nav.stufen button[data-stufe="${nr}"]`);
+  if(btn) btn.classList.add("done");
+  const prozent = (erledigteStufen.size/5)*100;
+  document.getElementById("gesamtFortschritt").style.width = prozent+"%";
+}
+
+/* ============================================================
+   KORREKTUR-SPERRE (für Live-Tippfelder & freie Textareas)
+   Ist ein Feld gesperrt, blockieren wir Backspace/Delete/Cut,
+   damit einmal Getipptes stehen bleibt und nicht mehr korrigiert
+   werden kann. Der Status wird als Badge angezeigt und ist auch
+   im Ausdruck sichtbar.
+   ============================================================ */
+const gesperrteFelder = new Set();
+
+function sperreUmschalten(id){
+  const checkbox = document.getElementById("sperren_"+id);
+  const eingabe = document.getElementById("eingabe_"+id) || document.getElementById("frei_"+id);
+  const badge = document.getElementById("statusBadge_"+id);
+  if(checkbox.checked){
+    gesperrteFelder.add(id);
+    if(eingabe) eingabe.classList.add("gesperrt");
+  } else {
+    gesperrteFelder.delete(id);
+    if(eingabe) eingabe.classList.remove("gesperrt");
+  }
+  if(badge){
+    badge.textContent = checkbox.checked ? "🔒 Korrektur gesperrt" : "🔓 Korrektur offen";
+    badge.className = "status-badge " + (checkbox.checked ? "gesperrt" : "offen");
+  }
+}
+
+function sperreKeydownFilter(e, id){
+  if(!gesperrteFelder.has(id)) return;
+  const blockierteTasten = ["Backspace","Delete"];
+  const istKürzen = blockierteTasten.includes(e.key);
+  const istAusschneiden = (e.ctrlKey||e.metaKey) && e.key.toLowerCase()==="x";
+  if(istKürzen || istAusschneiden){
+    e.preventDefault();
+  }
+}
+
+function sperrePasteFilter(e, id){
+  // Einfügen bleibt erlaubt, blockiert wird nur das Löschen/Ändern bereits
+  // getippter Zeichen — Einfügen an der aktuellen Cursorposition ist kein Löschen.
+}
+
+function druckeSeite(){
+  window.print();
+}
+
+// Druckt nur einen einzelnen Übungs-/Phasenabschnitt: der Abschnitt wird
+// geklont, sein aktueller Eingabestand (Textareas, Checkboxen) wird in den
+// Klon übertragen, und der Klon kommt in ein eigenes Overlay-Element, das
+// beim Drucken exklusiv sichtbar ist. So bleibt das Original-Layout
+// (Grid/Flex etc.) unangetastet — kein fragiles CSS-Revert nötig.
+function druckeAbschnitt(elementId){
+  const original = document.getElementById(elementId);
+  const overlay = document.getElementById("druckOverlay");
+  if(!original || !overlay){ druckeSeite(); return; }
+
+  const klon = original.cloneNode(true);
+
+  // Aktuelle Werte aus Textareas/Inputs/Checkboxen in den Klon übernehmen,
+  // da cloneNode bei Formularelementen nur die Attribute, nicht den
+  // Live-Wert kopiert.
+  const originalFelder = original.querySelectorAll("textarea, input, select");
+  const klonFelder = klon.querySelectorAll("textarea, input, select");
+  originalFelder.forEach((feld,i)=>{
+    const zielFeld = klonFelder[i];
+    if(!zielFeld) return;
+    if(feld.tagName === "TEXTAREA"){ zielFeld.textContent = feld.value; zielFeld.value = feld.value; }
+    else if(feld.type === "checkbox"){ if(feld.checked) zielFeld.setAttribute("checked","checked"); }
+    else { zielFeld.setAttribute("value", feld.value); zielFeld.value = feld.value; }
+  });
+
+  overlay.innerHTML = "";
+  const kopf = document.createElement("h2");
+  kopf.textContent = LEKTION.titel;
+  kopf.style.cssText = "font-size:1.3rem;margin:0 0 12px;color:#1e3a5f;";
+  overlay.appendChild(kopf);
+  overlay.appendChild(klon);
+
+  document.body.classList.add("druck-einzeln");
+  window.print();
+  setTimeout(()=>{
+    document.body.classList.remove("druck-einzeln");
+    overlay.innerHTML = "";
+  }, 500);
+}
+
+/* Navigation per Klick */
+document.querySelectorAll("nav.stufen button").forEach(btn=>{
+  btn.addEventListener("click", ()=> gehezuStufe(btn.dataset.stufe));
+});
+
+/* ============================================================
+   INITIALISIERUNG
+   ============================================================ */
+document.addEventListener("DOMContentLoaded", ()=>{
+  baueTastaturSVG();
+  baueGriffwegkarten();
+  baueLiveTippBereich();
+  baueStufe2();
+  baueStufe3();
+  baueQuiz();
+  baueZuordnung();
+  baueHausaufgaben();
+  aktualisiereGesamtauswertung();
+});
+</script>
+
+</body>
+</html>
