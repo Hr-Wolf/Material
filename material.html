@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Material</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header><h1>Unterrichtsmaterialien</h1></header>
+  <nav>
+    <a href="index.html">Start</a>
+    <a href="material.html" class="aktiv">Material</a>
+    <a href="links.html">Links</a>
+    <a href="impressum.html">Impressum</a>
+  </nav>
+  <main>
+    <div class="karte">
+      <h2>Beispiel-Quiz</h2>
+      <p>Was ist 7 &times; 8?</p>
+      <button onclick="pruefe(56)">56</button>
+      <button onclick="pruefe(54)">54</button>
+      <button onclick="pruefe(64)">64</button>
+      <p id="ergebnis" aria-live="polite"></p>
+    </div>
+    <div class="karte">
+      <h2>Aufklappbare Lösung</h2>
+      <p>Wie heißt die Hauptstadt von Bayern?</p>
+      <details><summary>Lösung anzeigen</summary>München</details>
+    </div>
+  </main>
+  <footer>&copy; Unterrichtsmaterialien</footer>
+  <script>
+    function pruefe(zahl) {
+      document.getElementById('ergebnis').textContent =
+        zahl === 56 ? 'Richtig!' : 'Leider falsch, versuche es nochmal.';
+    }
+  </script>
+</body>
+</html>
